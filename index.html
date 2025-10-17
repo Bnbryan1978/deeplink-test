@@ -1,22 +1,54 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>開啟 App</title>
-  <script>
-    const appLink = "vnd.youtube://youtu.be/73iL02p9iPo";
-    const webLink = "https://youtu.be/73iL02p9iPo";
-
-    window.onload = function() {
-      window.location = appLink;
-      setTimeout(() => {
-        window.location = webLink;
-      }, 1000);
-    };
-  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>開啟 YouTube App</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+      margin: 0;
+      background: #fafafa;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+    a.btn {
+      background: #ff0000;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 14px 28px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: background 0.2s;
+    }
+    a.btn:hover {
+      background: #cc0000;
+    }
+    p {
+      margin-top: 25px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    a.link {
+      color: #007aff;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <p>正在開啟 App，若未自動跳轉，<a href="https://youtu.be/73iL02p9iPo">請點此</a></p>
+  <h1>請點擊下方按鈕開啟 YouTube App</h1>
+  <a class="btn" href="vnd.youtube://youtu.be/73iL02p9iPo">▶️ 開啟 YouTube</a>
+  <p>若未安裝 App，<a class="link" href="https://youtu.be/73iL02p9iPo">請改開網頁版</a></p>
 </body>
 </html>
