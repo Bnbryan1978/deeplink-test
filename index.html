@@ -48,7 +48,35 @@
 </head>
 <body>
   <h1>請點擊下方按鈕開啟 YouTube App</h1>
-  <a class="btn" href="vnd.youtube://youtu.be/73iL02p9iPo">▶️ 開啟 YouTube</a>
+  <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
   <p>若未安裝 App，<a class="link" href="https://youtu.be/73iL02p9iPo">請改開網頁版</a></p>
+
+  <script>
+    const appLink = "vnd.youtube://youtu.be/73iL02p9iPo";
+    const webLink = "https://youtu.be/73iL02p9iPo";
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = /android/.test(ua);
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
+
+    function tryOpenApp() {
+      if (isInAppBrowser) {
+        // 在 FB/IG/LINE 內建瀏覽器中，顯示提示
+        alert("請點右上角「⋯」→ 選擇「在瀏覽器中開啟」以開啟 YouTube App");
+        window.location.href = webLink;
+      } else if (isIOS) {
+        window.location.href = appLink;
+        setTimeout(() => (window.location.href = webLink), 1200);
+      } else if (isAndroid) {
+        window.location.href = appLink;
+        setTimeout(() => (window.location.href = webLink), 1200);
+      } else {
+        // 桌機預設直接開網頁版
+        window.location.href = webLink;
+      }
+    }
+
+    document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
+  </script>
 </body>
 </html>
