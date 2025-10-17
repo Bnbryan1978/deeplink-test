@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title id="pageTitle">🎬 開啟 YouTube 影片</title>
+  <title>🎬 開啟 YouTube 影片</title>
 
-  <!-- 🧩 Open Graph Meta (由 JS 動態更新) -->
- <meta property="og:title" content="🔥 羊珞素全成分竟是食品級？揭開羊奶面膜真相（下） |  羊珞素到底是什麼？完整檢測內容曝光！">
-<meta property="og:description" content="立即於 YouTube App 中觀看這支影片。">
-  <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" id="ogImage">
-<meta property="og:image:width" content="1280">
-<meta property="og:image:height" content="720">
+  <!-- 🧩 FB / LINE / IG 分享預覽設定 (Open Graph) -->
+  <meta property="og:title" content="🎬 點此開啟 YouTube 影片" />
+  <meta property="og:description" content="立即於 YouTube App 中觀看這支影片。" />
+  <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="" id="ogUrl" />
+  <meta property="og:url" content="https://bnbryan1978.github.io/deeplink-test/" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <style>
@@ -60,27 +58,19 @@
   </style>
 </head>
 
+<body>
+  <img class="thumbnail" src="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" alt="YouTube Thumbnail" />
+  <h1>請點擊下方按鈕開啟 YouTube App</h1>
+  <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
+  <p>若未安裝 App，<a class="link" href="https://youtu.be/73iL02p9iPo">請改開網頁版</a></p>
+
   <script>
-    // === 🔧 你只要改這一行 ===
-    const videoUrl = "https://youtu.be/73iL02p9iPo";
-    // ==========================
-
-    // 從網址自動抓影片 ID
-    const match = videoUrl.match(/(?:youtu\.be\/|v=)([\w-]+)/);
-    const videoId = match ? match[1] : "";
-    const appLink = `vnd.youtube://youtu.be/${videoId}`;
-    const webLink = `https://youtu.be/${videoId}`;
-    const thumbLink = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-
-    // 更新網頁與按鈕
-    document.getElementById("thumbImg").src = thumbLink;
-    document.getElementById("webLink").href = webLink;
-    document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
-
-    // 更新 OG meta（讓 FB / LINE 分享正確顯示）
-    document.getElementById("ogImage").setAttribute("content", thumbLink);
-    document.getElementById("ogUrl").setAttribute("content", webLink);
-
+    const appLink = "vnd.youtube://youtu.be/73iL02p9iPo";
+    const webLink = "https://youtu.be/73iL02p9iPo";
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = /android/.test(ua);
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
 
     function tryOpenApp() {
       if (isInAppBrowser) {
@@ -93,6 +83,8 @@
         window.location.href = webLink;
       }
     }
+
+    document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
   </script>
 </body>
 </html>
