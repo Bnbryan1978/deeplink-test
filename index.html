@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎬 開啟 YouTube 影片</title>
 
-  <!-- 🧩 Open Graph for FB/LINE/IG share -->
+  <!-- 🧩 FB / LINE / IG 分享預覽設定 (Open Graph) -->
   <meta property="og:title" content="🎬 點此開啟 YouTube 影片" />
   <meta property="og:description" content="立即於 YouTube App 中觀看這支影片。" />
-  <meta property="og:image" content="https://img.youtube.com/vi/default/maxresdefault.jpg" />
+  <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" />
   <meta property="og:image:width" content="1280" />
   <meta property="og:image:height" content="720" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bnbryan1978.github.io/deeplink-test/" />
-  <meta property="og:site_name" content="YouTube 直開測試" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta property="og:site_name" content="YouTube 直開測試" />
 
   <style>
     body {
@@ -64,34 +64,23 @@
 </head>
 
 <body>
-  <img class="thumbnail" id="thumbnail" src="" alt="YouTube Thumbnail" />
-  <h1 id="title">若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」</h1>
+  <img class="thumbnail" src="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" alt="YouTube Thumbnail" />
+  <h1>若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」</h1>
   <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
-  <p>若未安裝 App，<a class="link" id="fallbackLink" href="#">請改開網頁版</a></p>
+  <p>若未安裝 App，<a class="link" href="https://youtu.be/73iL02p9iPo">請改開網頁版</a></p>
 
   <script>
-    // 🔍 解析網址參數（例如 ?v=XXXX&utm_source=facebook）
-    const params = new URLSearchParams(window.location.search);
-    const vid = params.get("v") || "73iL02p9iPo"; // 預設影片ID
-    const utm = window.location.search.replace(/^\?/, ""); // 保留追蹤參數
-
-    // 🔗 動態組合連結
-    const appLink = `vnd.youtube://www.youtube.com/watch?v=${vid}`;
-    const webLink = `https://www.youtube.com/watch?v=${vid}&feature=youtu.be${utm ? "&" + utm : ""}`;
-
-    // 🧠 判斷環境
+    const appLink = "vnd.youtube://youtu.be/73iL02p9iPo";
+    const webLink = "https://youtu.be/73iL02p9iPo";
     const ua = navigator.userAgent.toLowerCase();
     const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
 
-    // 🖼️ 動態更新預覽圖 & 連結
-    document.getElementById("thumbnail").src = `https://img.youtube.com/vi/${vid}/maxresdefault.jpg`;
-    document.getElementById("fallbackLink").href = webLink;
-
-    // 🚀 嘗試開啟 App
     function tryOpenApp() {
       if (isInAppBrowser) {
+        // 在 FB / IG / LINE 內：不能自動開 App，直接導向網頁版
         window.location.href = webLink;
       } else {
+        // 在一般瀏覽器：先試開 App，若失敗 1.2 秒後開網頁版
         const start = Date.now();
         window.location.href = appLink;
         setTimeout(() => {
@@ -102,8 +91,9 @@
       }
     }
 
-    // 頁面載入自動嘗試
+    // 頁面載入後自動嘗試開啟
     window.onload = tryOpenApp;
+    // 同時也保留按鈕讓使用者手動重試
     document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
   </script>
 </body>
