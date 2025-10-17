@@ -8,11 +8,8 @@
   <!-- 🧩 Open Graph (FB / LINE / IG 預覽圖設定) -->
   <meta property="og:title" content="🎬 BN單身狗 - 點此開啟 YouTube 影片" />
   <meta property="og:description" content="立即於 YouTube App 中觀看 BN單身狗 的影片！" />
-  <meta property="og:image" content="" id="ogImage"/>
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="400" />
+  <meta property="og:image" content="banner%20onlly.001.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="" id="ogUrl"/>
   <meta property="og:site_name" content="BN單身狗 YouTube" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -44,10 +41,6 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
-    h1 {
-      font-size: 1.3rem;
-      margin: 12px 0;
-    }
     h2.title {
       font-size: 1.1rem;
       margin: 8px 0 4px;
@@ -72,12 +65,6 @@
       transition: background 0.2s;
     }
     a.btn:hover { background: #cc0000; }
-    p.link-note {
-      margin-top: 25px;
-      font-size: 0.95rem;
-      color: #555;
-    }
-    a.link { color: #007aff; text-decoration: underline; }
     footer {
       margin-top: 40px;
       font-size: 0.85rem;
@@ -93,70 +80,47 @@
   <!-- 🎥 動態影片資訊 -->
   <img class="thumbnail" id="thumbnail" src="" alt="YouTube Thumbnail" />
   <h2 class="title" id="videoTitle">載入中...</h2>
-  <p class="desc" id="videoDesc"></p>
 
-  <h1>若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」</h1>
   <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
-  <p class="link-note">若未安裝 App，<a class="link" id="fallbackLink" href="#">請改開網頁版</a></p>
+  <p id="descNote">若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」</p>
 
   <footer>© BN單身狗 YouTube 頻道</footer>
 
   <script>
-    // ✅ 你的 YouTube API 金鑰
-    const API_KEY = "在這裡貼上你的 YouTube Data API 金鑰";
-
-    // 🔍 解析網址參數 (?v=影片ID)
     const params = new URLSearchParams(window.location.search);
     const vid = params.get("v");
     const utm = window.location.search.replace(/^\?/, "");
+    const ua = navigator.userAgent.toLowerCase();
+    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
 
-    // 🔗 網址 & 網域自動生成
-    const domain = window.location.origin;
-    const baseURL = `${domain}${window.location.pathname}`;
-    const ogImageMeta = document.getElementById("ogImage");
-    const ogUrlMeta = document.getElementById("ogUrl");
-
-    // 📺 YouTube 連結與 Fallback
+    // 🔗 連結
     const appLink = vid ? `vnd.youtube://www.youtube.com/watch?v=${vid}` : "vnd.youtube://www.youtube.com/@BN單身狗";
     const webLink = vid
       ? `https://www.youtube.com/watch?v=${vid}&feature=youtu.be${utm ? "&" + utm : ""}`
       : "https://www.youtube.com/@BN單身狗";
 
-    // 🧠 判斷環境
-    const ua = navigator.userAgent.toLowerCase();
-    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
-
-    // 🖼️ 更新 Open Graph URL & 預設圖
-    ogUrlMeta.content = baseURL + (vid ? `?v=${vid}` : "");
-    ogImageMeta.content = `${domain}/banner%20onlly.001.png`;
-
-    // 🎥 取得影片資訊（若有ID）
+    // 🎥 抓取影片資訊（無 API Key）
     async function fetchVideoData() {
       if (!vid) {
         document.getElementById("videoTitle").textContent = "BN單身狗頻道";
-        document.getElementById("videoDesc").textContent = "歡迎觀看更多 BN單身狗 的影片與真實開箱。";
         document.getElementById("thumbnail").src = "banner%20onlly.001.png";
-        document.getElementById("fallbackLink").href = webLink;
         return;
       }
 
       try {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${API_KEY}`);
+        const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`;
+        const res = await fetch(oEmbedUrl);
         const data = await res.json();
-        if (!data.items || !data.items.length) throw new Error("影片不存在");
-        const info = data.items[0].snippet;
 
-        document.getElementById("videoTitle").textContent = info.title;
-        document.getElementById("videoDesc").textContent = info.description.substring(0, 200) + "...";
-        document.getElementById("thumbnail").src = info.thumbnails.maxres?.url || info.thumbnails.high?.url;
-        document.getElementById("fallbackLink").href = webLink;
-      } catch (e) {
-        document.getElementById("videoTitle").textContent = "找不到影片資訊";
-        console.error(e);
+        document.getElementById("videoTitle").textContent = data.title;
+        document.getElementById("thumbnail").src = data.thumbnail_url;
+      } catch (err) {
+        document.getElementById("videoTitle").textContent = "無法載入影片資訊";
+        console.error(err);
       }
     }
 
-    // 🚀 嘗試開啟 App
+    // 🚀 開啟 YouTube App
     function tryOpenApp() {
       if (isInAppBrowser) {
         window.location.href = webLink;
@@ -171,7 +135,6 @@
       }
     }
 
-    // ▶️ 初始化
     window.onload = () => {
       fetchVideoData();
       tryOpenApp();
