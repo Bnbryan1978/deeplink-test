@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>開啟 App</title>
+  <script>
+    const appLink = "vnd.youtube://youtu.be/73iL02p9iPo";
+    const webLink = "https://youtu.be/73iL02p9iPo";
+
+    window.onload = function() {
+      window.location = appLink;
+      setTimeout(() => {
+        window.location = webLink;
+      }, 1000);
+    };
+  </script>
+</head>
+<body>
+  <p>正在開啟 App，若未自動跳轉，<a href="https://youtu.be/73iL02p9iPo">請點此</a></p>
+</body>
+</html>
