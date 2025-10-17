@@ -1,108 +1,97 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title id="pageTitle">🎬 開啟 YouTube 影片</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>點此開啟 YouTube 影片</title>
 
-  <!-- 🧩 Open Graph Meta (由 JS 動態更新) -->
-  <meta property="og:title" content="🎬 點此開啟 YouTube 影片" />
-  <meta property="og:description" content="立即於 YouTube App 中觀看這支影片。" />
-  <meta property="og:image" content="" id="ogImage" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="" id="ogUrl" />
-  <meta name="twitter:card" content="summary_large_image" />
+<!-- 🧩 預設 OG（讓爬蟲即使沒有 JS 也能抓到基本縮圖） -->
+<meta property="og:title" content="🔥 點此開啟 YouTube 影片">
+<meta property="og:description" content="立即於 YouTube App 中觀看這支影片。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://deeplink-test-tklab.netlify.app/">
+<meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
 
-  <style>
-    body {
-      font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
-      margin: 0;
-      background: #fafafa;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-    img.thumbnail {
-      width: 90%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 20px;
-    }
-    a.btn {
-      background: #ff0000;
-      color: #fff;
-      text-decoration: none;
-      font-size: 1.2rem;
-      padding: 14px 28px;
-      border-radius: 10px;
-      display: inline-block;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      transition: background 0.2s;
-    }
-    a.btn:hover { background: #cc0000; }
-    p {
-      margin-top: 25px;
-      font-size: 0.95rem;
-      color: #555;
-    }
-    a.link { color: #007aff; text-decoration: underline; }
-  </style>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #111;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
+    text-align: center;
+  }
+  .wrap {
+    padding: 40px 20px;
+  }
+  img {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 10px;
+  }
+  a {
+    display: inline-block;
+    margin-top: 20px;
+    background: #ff0000;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+</style>
 </head>
 
 <body>
-  <img class="thumbnail" id="thumbImg" src="" alt="YouTube Thumbnail" />
-  <h1 id="videoTitle">請點擊下方按鈕開啟 YouTube App</h1>
-  <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
-  <p>若未安裝 App，<a class="link" id="webLink" href="#">請改開網頁版</a></p>
+<div class="wrap">
+  <h2 id="title">正在開啟 YouTube App…</h2>
+  <img id="thumb" src="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" alt="影片預覽">
+  <br>
+  <a id="openBtn" href="https://youtu.be/73iL02p9iPo" target="_blank">👉 若未自動跳轉，請點此開啟影片</a>
+</div>
 
-  <script>
-    // === 🔧 你只要改這一行 ===
-    const videoUrl = "https://youtu.be/73iL02p9iPo";
-    // ==========================
+<script>
+(function(){
+  // 預設影片 ID（如果網址沒有參數）
+  const defaultId = "73iL02p9iPo";
 
-    // 從網址自動抓影片 ID
-    const match = videoUrl.match(/(?:youtu\.be\/|v=)([\w-]+)/);
-    const videoId = match ? match[1] : "";
-    const appLink = `vnd.youtube://youtu.be/${videoId}`;
-    const webLink = `https://youtu.be/${videoId}`;
-    const thumbLink = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  // 讀取網址參數 ?v=影片ID
+  const urlParams = new URLSearchParams(window.location.search);
+  const videoId = urlParams.get("v") || defaultId;
 
-    // 更新網頁與按鈕
-    document.getElementById("thumbImg").src = thumbLink;
-    document.getElementById("webLink").href = webLink;
-    document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
+  // 建立 Deep Link 與縮圖
+  const appLink = `vnd.youtube://youtu.be/${videoId}`;
+  const webLink = `https://youtu.be/${videoId}`;
+  const thumbLink = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
-    // 更新 OG meta（讓 FB / LINE 分享正確顯示）
-    document.getElementById("ogImage").setAttribute("content", thumbLink);
-    document.getElementById("ogUrl").setAttribute("content", webLink);
+  // 更新頁面內容
+  document.getElementById("thumb").src = thumbLink;
+  document.getElementById("openBtn").href = webLink;
 
-    // 判斷裝置與開啟 App
-    const ua = navigator.userAgent.toLowerCase();
-    const isAndroid = /android/.test(ua);
-    const isIOS = /iphone|ipad|ipod/.test(ua);
-    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
+  // 偵測平台
+  const ua = navigator.userAgent.toLowerCase();
+  const isAndroid = /android/.test(ua);
+  const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
 
-    function tryOpenApp() {
-      if (isInAppBrowser) {
-        alert("📱 請點右上角「⋯」→ 選擇「在瀏覽器中開啟」以開啟 YouTube App");
-        window.location.href = webLink;
-      } else if (isIOS || isAndroid) {
-        window.location.href = appLink;
-        setTimeout(() => (window.location.href = webLink), 1200);
-      } else {
-        window.location.href = webLink;
-      }
+  // 開啟 App 或 Web
+  function openApp() {
+    if (isInAppBrowser) {
+      alert("請點右上角『⋯』 → 選擇「在瀏覽器中開啟」以啟動 YouTube App");
+      window.location.href = webLink;
+    } else if (isIOS || isAndroid) {
+      window.location.href = appLink;
+      setTimeout(() => window.location.href = webLink, 1200);
+    } else {
+      window.location.href = webLink;
     }
-  </script>
+  }
+
+  // 自動執行跳轉
+  window.onload = openApp;
+})();
+</script>
 </body>
 </html>
-update to auto deep link version
