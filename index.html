@@ -87,11 +87,6 @@
     document.getElementById("ogImage").setAttribute("content", thumbLink);
     document.getElementById("ogUrl").setAttribute("content", webLink);
 
-    // 判斷裝置與開啟 App
-    const ua = navigator.userAgent.toLowerCase();
-    const isAndroid = /android/.test(ua);
-    const isIOS = /iphone|ipad|ipod/.test(ua);
-    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
 
     function tryOpenApp() {
       if (isInAppBrowser) {
