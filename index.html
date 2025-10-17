@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>開啟 YouTube App</title>
+  <title>🎬 開啟 YouTube 影片</title>
+
+  <!-- 🧩 FB / LINE / IG 分享預覽設定 (Open Graph) -->
+  <meta property="og:title" content="🎬 點此開啟 YouTube 影片" />
+  <meta property="og:description" content="立即於 YouTube App 中觀看這支影片。" />
+  <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bnbryan1978.github.io/deeplink-test/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
   <style>
     body {
       font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
@@ -16,6 +25,13 @@
       align-items: center;
       height: 100vh;
       text-align: center;
+    }
+    img.thumbnail {
+      width: 90%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
     h1 {
       font-size: 1.6rem;
@@ -32,21 +48,18 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       transition: background 0.2s;
     }
-    a.btn:hover {
-      background: #cc0000;
-    }
+    a.btn:hover { background: #cc0000; }
     p {
       margin-top: 25px;
       font-size: 0.95rem;
       color: #555;
     }
-    a.link {
-      color: #007aff;
-      text-decoration: underline;
-    }
+    a.link { color: #007aff; text-decoration: underline; }
   </style>
 </head>
+
 <body>
+  <img class="thumbnail" src="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" alt="YouTube Thumbnail" />
   <h1>請點擊下方按鈕開啟 YouTube App</h1>
   <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
   <p>若未安裝 App，<a class="link" href="https://youtu.be/73iL02p9iPo">請改開網頁版</a></p>
@@ -61,17 +74,12 @@
 
     function tryOpenApp() {
       if (isInAppBrowser) {
-        // 在 FB/IG/LINE 內建瀏覽器中，顯示提示
-        alert("請點右上角「⋯」→ 選擇「在瀏覽器中開啟」以開啟 YouTube App");
+        alert("📱 請點右上角「⋯」→ 選擇「在瀏覽器中開啟」以開啟 YouTube App");
         window.location.href = webLink;
-      } else if (isIOS) {
-        window.location.href = appLink;
-        setTimeout(() => (window.location.href = webLink), 1200);
-      } else if (isAndroid) {
+      } else if (isIOS || isAndroid) {
         window.location.href = appLink;
         setTimeout(() => (window.location.href = webLink), 1200);
       } else {
-        // 桌機預設直接開網頁版
         window.location.href = webLink;
       }
     }
