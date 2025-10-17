@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎬 開啟 YouTube 影片</title>
 
-  <!-- 🧩 Open Graph (FB / LINE / IG 分享預覽設定) -->
+  <!-- 🧩 Open Graph for FB/LINE/IG share -->
   <meta property="og:title" content="🎬 點此開啟 YouTube 影片" />
   <meta property="og:description" content="立即於 YouTube App 中觀看這支影片。" />
-  <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" />
+  <meta property="og:image" content="https://img.youtube.com/vi/default/maxresdefault.jpg" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="720" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="BN單身狗 YouTube" />
+  <meta property="og:url" content="https://bnbryan1978.github.io/deeplink-test/" />
+  <meta property="og:site_name" content="YouTube 直開測試" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <style>
@@ -23,9 +26,9 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       text-align: center;
-      padding: 20px 16px 60px;
+      padding: 0 16px;
     }
     img.thumbnail {
       width: 90%;
@@ -34,69 +37,55 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
-    h2.title {
-      font-size: 1.1rem;
-      margin: 8px 0 4px;
-    }
-    p.note {
-      font-size: 0.95rem;
-      color: #555;
-      margin: 10px 0 25px;
+    h1 {
+      font-size: 1.5rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
     }
     a.btn {
       background: #ff0000;
       color: #fff;
       text-decoration: none;
-      font-size: 1.1rem;
-      padding: 12px 26px;
+      font-size: 1.2rem;
+      padding: 14px 28px;
       border-radius: 10px;
       display: inline-block;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       transition: background 0.2s;
     }
     a.btn:hover { background: #cc0000; }
-    footer {
-      margin-top: 40px;
-      font-size: 0.85rem;
-      color: #777;
+    p {
+      margin-top: 25px;
+      font-size: 0.95rem;
+      color: #555;
     }
+    a.link { color: #007aff; text-decoration: underline; }
   </style>
 </head>
 
 <body>
-  <!-- 🎥 動態影片縮圖與資訊 -->
   <img class="thumbnail" id="thumbnail" src="" alt="YouTube Thumbnail" />
-  <h2 class="title" id="videoTitle">載入中...</h2>
-
+  <h1 id="title">若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」</h1>
   <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
-  <p class="note">若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」。</p>
-
-  <footer>© BN單身狗 YouTube 頻道</footer>
+  <p>若未安裝 App，<a class="link" id="fallbackLink" href="#">請改開網頁版</a></p>
 
   <script>
+    // 🔍 解析網址參數（例如 ?v=XXXX&utm_source=facebook）
     const params = new URLSearchParams(window.location.search);
-    const vid = params.get("v") || "73iL02p9iPo"; // 預設影片 ID
-    const utm = window.location.search.replace(/^\?/, "");
-    const ua = navigator.userAgent.toLowerCase();
-    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
+    const vid = params.get("v") || "73iL02p9iPo"; // 預設影片ID
+    const utm = window.location.search.replace(/^\?/, ""); // 保留追蹤參數
 
-    // 🔗 YouTube App / Web 連結
+    // 🔗 動態組合連結
     const appLink = `vnd.youtube://www.youtube.com/watch?v=${vid}`;
     const webLink = `https://www.youtube.com/watch?v=${vid}&feature=youtu.be${utm ? "&" + utm : ""}`;
 
-    // 🎥 抓影片資訊 (使用 oEmbed，不需 API key)
-    async function fetchVideoData() {
-      try {
-        const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`;
-        const res = await fetch(oEmbedUrl);
-        const data = await res.json();
-        document.getElementById("videoTitle").textContent = data.title;
-        document.getElementById("thumbnail").src = data.thumbnail_url;
-      } catch (err) {
-        document.getElementById("videoTitle").textContent = "無法載入影片資訊";
-        document.getElementById("thumbnail").src = "https://img.youtube.com/vi/" + vid + "/hqdefault.jpg";
-      }
-    }
+    // 🧠 判斷環境
+    const ua = navigator.userAgent.toLowerCase();
+    const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
+
+    // 🖼️ 動態更新預覽圖 & 連結
+    document.getElementById("thumbnail").src = `https://img.youtube.com/vi/${vid}/maxresdefault.jpg`;
+    document.getElementById("fallbackLink").href = webLink;
 
     // 🚀 嘗試開啟 App
     function tryOpenApp() {
@@ -113,11 +102,8 @@
       }
     }
 
-    // ▶️ 初始化
-    window.onload = () => {
-      fetchVideoData();
-      tryOpenApp();
-    };
+    // 頁面載入自動嘗試
+    window.onload = tryOpenApp;
     document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
   </script>
 </body>
