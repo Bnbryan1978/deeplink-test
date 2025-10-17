@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎬 開啟 YouTube 影片</title>
+  <title>🎬 開啟 YouTube 影片 | BN單身狗</title>
 
-  <!-- 🧩 FB / LINE / IG 分享預覽設定 (Open Graph) -->
-  <meta property="og:title" content="🎬 點此開啟 YouTube 影片" />
-  <meta property="og:description" content="立即於 YouTube App 中觀看這支影片。" />
-  <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" />
-  <meta property="og:image:width" content="1280" />
-  <meta property="og:image:height" content="720" />
+  <!-- 🧩 Open Graph (FB / LINE / IG 預覽圖設定) -->
+  <meta property="og:title" content="🎬 BN單身狗 - 點此開啟 YouTube 影片" />
+  <meta property="og:description" content="立即於 YouTube App 中觀看 BN單身狗 的影片！" />
+  <meta property="og:image" content="" id="ogImage"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="400" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://bnbryan1978.github.io/deeplink-test/" />
+  <meta property="og:url" content="" id="ogUrl"/>
+  <meta property="og:site_name" content="BN單身狗 YouTube" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta property="og:site_name" content="YouTube 直開測試" />
 
   <style>
     body {
@@ -26,9 +26,16 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       text-align: center;
-      padding: 0 16px;
+      padding: 20px 16px 60px;
+    }
+    img.banner {
+      width: 90%;
+      max-width: 480px;
+      margin-bottom: 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
     img.thumbnail {
       width: 90%;
@@ -38,49 +45,122 @@
       margin-bottom: 20px;
     }
     h1 {
-      font-size: 1.5rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
+      font-size: 1.3rem;
+      margin: 12px 0;
+    }
+    h2.title {
+      font-size: 1.1rem;
+      margin: 8px 0 4px;
+    }
+    p.desc {
+      max-width: 600px;
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
     }
     a.btn {
       background: #ff0000;
       color: #fff;
       text-decoration: none;
-      font-size: 1.2rem;
-      padding: 14px 28px;
+      font-size: 1.1rem;
+      padding: 12px 26px;
       border-radius: 10px;
       display: inline-block;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       transition: background 0.2s;
     }
     a.btn:hover { background: #cc0000; }
-    p {
+    p.link-note {
       margin-top: 25px;
       font-size: 0.95rem;
       color: #555;
     }
     a.link { color: #007aff; text-decoration: underline; }
+    footer {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #777;
+    }
   </style>
 </head>
 
 <body>
-  <img class="thumbnail" src="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" alt="YouTube Thumbnail" />
+  <!-- 🔥 頻道 Banner -->
+  <img src="banner%20onlly.001.png" alt="BN 單身狗 YouTube" class="banner"/>
+
+  <!-- 🎥 動態影片資訊 -->
+  <img class="thumbnail" id="thumbnail" src="" alt="YouTube Thumbnail" />
+  <h2 class="title" id="videoTitle">載入中...</h2>
+  <p class="desc" id="videoDesc"></p>
+
   <h1>若未自動開啟，請長按右上角「⋯」→ 選擇「在瀏覽器中開啟」</h1>
   <a class="btn" id="openAppBtn" href="#">▶️ 開啟 YouTube</a>
-  <p>若未安裝 App，<a class="link" href="https://youtu.be/73iL02p9iPo">請改開網頁版</a></p>
+  <p class="link-note">若未安裝 App，<a class="link" id="fallbackLink" href="#">請改開網頁版</a></p>
+
+  <footer>© BN單身狗 YouTube 頻道</footer>
 
   <script>
-    const appLink = "vnd.youtube://youtu.be/73iL02p9iPo";
-    const webLink = "https://youtu.be/73iL02p9iPo";
+    // ✅ 你的 YouTube API 金鑰
+    const API_KEY = "在這裡貼上你的 YouTube Data API 金鑰";
+
+    // 🔍 解析網址參數 (?v=影片ID)
+    const params = new URLSearchParams(window.location.search);
+    const vid = params.get("v");
+    const utm = window.location.search.replace(/^\?/, "");
+
+    // 🔗 網址 & 網域自動生成
+    const domain = window.location.origin;
+    const baseURL = `${domain}${window.location.pathname}`;
+    const ogImageMeta = document.getElementById("ogImage");
+    const ogUrlMeta = document.getElementById("ogUrl");
+
+    // 📺 YouTube 連結與 Fallback
+    const appLink = vid ? `vnd.youtube://www.youtube.com/watch?v=${vid}` : "vnd.youtube://www.youtube.com/@BN單身狗";
+    const webLink = vid
+      ? `https://www.youtube.com/watch?v=${vid}&feature=youtu.be${utm ? "&" + utm : ""}`
+      : "https://www.youtube.com/@BN單身狗";
+
+    // 🧠 判斷環境
     const ua = navigator.userAgent.toLowerCase();
     const isInAppBrowser = /fbav|instagram|line|messenger/.test(ua);
 
+    // 🖼️ 更新 Open Graph URL & 預設圖
+    ogUrlMeta.content = baseURL + (vid ? `?v=${vid}` : "");
+    ogImageMeta.content = `${domain}/banner%20onlly.001.png`;
+
+    // 🎥 取得影片資訊（若有ID）
+    async function fetchVideoData() {
+      if (!vid) {
+        document.getElementById("videoTitle").textContent = "BN單身狗頻道";
+        document.getElementById("videoDesc").textContent = "歡迎觀看更多 BN單身狗 的影片與真實開箱。";
+        document.getElementById("thumbnail").src = "banner%20onlly.001.png";
+        document.getElementById("fallbackLink").href = webLink;
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${API_KEY}`);
+        const data = await res.json();
+        if (!data.items || !data.items.length) throw new Error("影片不存在");
+        const info = data.items[0].snippet;
+
+        document.getElementById("videoTitle").textContent = info.title;
+        document.getElementById("videoDesc").textContent = info.description.substring(0, 200) + "...";
+        document.getElementById("thumbnail").src = info.thumbnails.maxres?.url || info.thumbnails.high?.url;
+        document.getElementById("fallbackLink").href = webLink;
+      } catch (e) {
+        document.getElementById("videoTitle").textContent = "找不到影片資訊";
+        console.error(e);
+      }
+    }
+
+    // 🚀 嘗試開啟 App
     function tryOpenApp() {
       if (isInAppBrowser) {
-        // 在 FB / IG / LINE 內：不能自動開 App，直接導向網頁版
         window.location.href = webLink;
       } else {
-        // 在一般瀏覽器：先試開 App，若失敗 1.2 秒後開網頁版
         const start = Date.now();
         window.location.href = appLink;
         setTimeout(() => {
@@ -91,9 +171,11 @@
       }
     }
 
-    // 頁面載入後自動嘗試開啟
-    window.onload = tryOpenApp;
-    // 同時也保留按鈕讓使用者手動重試
+    // ▶️ 初始化
+    window.onload = () => {
+      fetchVideoData();
+      tryOpenApp();
+    };
     document.getElementById("openAppBtn").addEventListener("click", tryOpenApp);
   </script>
 </body>
