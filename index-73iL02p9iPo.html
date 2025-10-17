@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🔥羊珞素全成分竟是食品級？揭開羊奶面膜真相（下）｜羊珞素到底是什麼？完整檢測內容曝光！  #羊珞素 #tklab</title>
 
-  <!-- Open Graph：讓 FB/LINE/IG 預覽顯示正確標題與縮圖（靜態，無 JS 依賴） -->
+  <!-- Open Graph：FB/LINE 預覽用（靜態、保證顯示正確標題與縮圖） -->
   <meta property="og:title" content="🔥羊珞素全成分竟是食品級？揭開羊奶面膜真相（下）｜羊珞素到底是什麼？完整檢測內容曝光！  #羊珞素 #tklab" />
   <meta property="og:description" content="點此開啟 YouTube 觀看完整檢測內容與解析。" />
   <meta property="og:image" content="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" />
@@ -27,41 +27,69 @@
     .btn{
       display:inline-block; padding:12px 22px; border-radius:10px;
       background:#ff0000; color:#fff; text-decoration:none; font-weight:600;
-      box-shadow:0 6px 14px rgba(0,0,0,.18);
+      box-shadow:0 6px 14px rgba(0,0,0,.18); margin:6px 6px 0;
     }
-    .note{margin-top:14px; color:#666; font-size:.95rem}
+    .btn.secondary{ background:#0f62fe; }
+    .note{margin-top:12px; color:#666; font-size:.95rem}
+    .tip{display:none; margin-top:10px; font-size:.92rem; color:#555}
   </style>
 </head>
 <body>
   <div class="wrap">
     <img class="thumb" src="https://img.youtube.com/vi/73iL02p9iPo/maxresdefault.jpg" alt="YouTube 影片縮圖" />
     <h1>🔥羊珞素全成分竟是食品級？揭開羊奶面膜真相（下）｜羊珞素到底是什麼？完整檢測內容曝光！  #羊珞素 #tklab</h1>
-    <a class="btn" id="open">▶️ 開啟 YouTube</a>
-    <div class="note">若未自動開啟，請點上方按鈕；在 FB/LINE 內建瀏覽器會改為開啟網頁版。</div>
+
+    <a class="btn" id="openApp">▶️ 開啟 YouTube App</a>
+    <a class="btn secondary" id="openBrowser" href="#" style="display:none">🌐 在瀏覽器中開啟</a>
+
+    <div class="note">若未自動開啟，請點上方按鈕。</div>
+    <div class="tip" id="tip">您目前在 FB/IG/LINE 內建瀏覽器，系統限制無法直接開 App。請點「在瀏覽器中開啟」，或於右上角「⋯」選「在瀏覽器中開啟」。</div>
   </div>
 
   <script>
     // 固定這支影片（方案 B：一支片一個檔）
     const VID = "73iL02p9iPo";
     const WEB = `https://www.youtube.com/watch?v=${VID}&feature=youtu.be`;
-    const APP = `vnd.youtube://www.youtube.com/watch?v=${VID}`;
+    const IOS_SCHEME = `vnd.youtube://www.youtube.com/watch?v=${VID}`;
+    const ANDROID_INTENT = `intent://www.youtube.com/watch?v=${VID}#Intent;scheme=https;package=com.google.android.youtube;S.browser_fallback_url=${encodeURIComponent(WEB)};end`;
 
     const ua = navigator.userAgent.toLowerCase();
     const inApp = /fbav|instagram|line|messenger/.test(ua);
+    const isAndroid = /android/.test(ua);
+    const isIOS = /iphone|ipad|ipod/.test(ua);
 
-    function go(){
-      if(inApp){
-        location.href = WEB; // 內建瀏覽器無法直開 App → 直接開網頁版
-      }else{
+    function openApp(){
+      if (inApp) {
+        // 內建瀏覽器：直接開網頁版，並提示如何外開
+        document.getElementById('tip').style.display = 'block';
+        location.href = WEB;
+        return;
+      }
+      if (isAndroid) {
+        // Android：先試 intent（成功率最高），系統會自帶 fallback_url
+        location.href = ANDROID_INTENT;
+      } else if (isIOS) {
+        // iOS：用 vnd scheme，失敗再回落到網頁版
         const t = Date.now();
-        location.href = APP; // 嘗試叫起 App
-        setTimeout(()=>{ if(Date.now()-t < 1500) location.href = WEB; }, 1200); // 失敗就回網頁版
+        location.href = IOS_SCHEME;
+        setTimeout(()=>{ if(Date.now()-t < 1500) location.href = WEB; }, 1200);
+      } else {
+        // 其他平台：直接開網頁
+        location.href = WEB;
       }
     }
 
-    // 載入即嘗試；同時保留按鈕
-    window.addEventListener('load', go);
-    document.getElementById('open').addEventListener('click', go);
+    // 額外提供「在瀏覽器中開啟」按鈕（只在 in-app 顯示）
+    if (inApp) {
+      const btn = document.getElementById('openBrowser');
+      btn.style.display = 'inline-block';
+      btn.addEventListener('click', (e)=>{ e.preventDefault(); window.open(WEB, '_blank'); });
+      document.getElementById('tip').style.display = 'block';
+    }
+
+    // 載入即嘗試；保留按鈕重試
+    window.addEventListener('load', openApp);
+    document.getElementById('openApp').addEventListener('click', openApp);
   </script>
 </body>
 </html>
